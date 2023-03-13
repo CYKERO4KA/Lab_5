@@ -2,7 +2,6 @@
 
 class Pine : Tree
 {
-
     public override string Type
     {
         get => "Pine";

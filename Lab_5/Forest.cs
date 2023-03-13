@@ -2,6 +2,7 @@
 
 class Forest
 {
+    private int _basket;
     public List<Tree> Trees;
     public List<IBush> Bushes;
 
@@ -11,22 +12,60 @@ class Forest
         Bushes = bushes;
     }
 
-    public void CountTrees()
+    public void GoToForest()
     {
-        Console.WriteLine(Trees.Count);
+        while (true)
+        {
+            Console.WriteLine("Choose action:\n1. Plant tree\n2. Chop tree\n3. Show trees\n4. Plant bush\n5. Show bushes\n6. Collect berries");
+            char index = Convert.ToChar(Console.ReadLine());
+            Console.Clear();
+            switch (index)
+            {
+                case '1':
+                    PlantTree();
+                    break;
+                case '2':
+                    ChopTree();
+                    break;
+                case '3':
+                    ShowTrees();
+                    break;
+                case '4':
+                    PlantBush();
+                    break;
+                case '5':
+                    ShowBushes();
+                    break;
+                case '6':
+                    CollectBerries();
+                    break;
+                default:
+                    Console.WriteLine("Incorrect index!");
+                    break;
+            }
+            Console.ReadKey();
+            Console.Clear();
+        }
     }
 
-    public void ShowTrees()
+    private void ShowCountTrees()
+    {
+        Console.WriteLine($"Trees: " + Trees.Count);
+    }
+
+    private void ShowTrees()
     {
         int i = 1;
         Random random = new Random();
         foreach (var tree in Trees)
         {
-            Console.WriteLine($"{i++} {tree.Type}, height - {tree.Height ++}, age - {tree.Age ++}");
+            Console.WriteLine($"{i++}. {tree.Type}, height - {tree.Height}, age - {tree.Age ++}");
+            tree.Height += random.Next(0, 10);
         }
+        ShowCountTrees();
     }
 
-    public void PlantTree()
+    private void PlantTree()
     {
         char index;
         Console.WriteLine("Plant:\n1.Birch\n2.Christmas tree\n3.Pine");
@@ -51,32 +90,42 @@ class Forest
         }
     }
 
-    public void ChopTree()
+    private void ChopTree()
     {
         int index;
-        ShowTrees();
-        index = Convert.ToInt32(Console.ReadLine());
-
-        try
+        if (Trees.Count <= 0)
         {
-            Trees.RemoveAt(index - 1);
+            Console.WriteLine("There is no trees to chop!");
         }
-        catch
+        else
         {
-            Console.WriteLine("Incorrect index!");
+            ShowTrees();
+            index = Convert.ToInt32(Console.ReadLine());
+
+            try
+            {
+                Trees.RemoveAt(index - 1);
+            }
+            catch
+            {
+                Console.WriteLine("Incorrect index!");
+            }
         }
     }
 
-    public void ShowBushes()
+    private void ShowBushes()
     {
         int i = 1;
         Random random = new Random();
+        Berry berry = new Berry(random);
         foreach (var bush in Bushes)
         {
-            Console.WriteLine($"{i++} {bush.Name} -- {bush.CountOfBerries}");
+            bush.CountOfBerries += berry.Count;
+            Console.WriteLine($"{i++}. {bush.Name} -- {bush.CountOfBerries}");
         }
     }
-    public void PlantBush()
+
+    private void PlantBush()
     {
         char index;
         Console.WriteLine("Plant:\n1.Blueberry\n2.Raspberry");
@@ -84,7 +133,6 @@ class Forest
         Random random = new Random();
 
         Berry berry = new Berry(random);
-        int age = 1;
 
         switch (index)
         {
@@ -97,6 +145,31 @@ class Forest
             default:
                 Console.WriteLine("Incorrect action!");
                 break;
+        }
+    }
+
+    private void CollectBerries()
+    {
+        int index;
+        if (Bushes.Count <= 0)
+        {
+            Console.WriteLine("There is no bushes!");
+        }
+        else
+        {
+            ShowBushes();
+            index = Convert.ToInt32(Console.ReadLine());
+
+            try
+            {
+                _basket += Bushes[index-1].CountOfBerries;
+                Console.WriteLine($"You have {_basket} berries in your basket");
+                Bushes[index-1].CountOfBerries = 0;
+            }
+            catch
+            {
+                Console.WriteLine("Incorrect index!");
+            }
         }
     }
 }
